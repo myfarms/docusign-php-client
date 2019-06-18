@@ -31,6 +31,8 @@
         "psr-4": { "DocuSign\\eSign\\" : "src/" }
     },
     "replace": {
-    	"docusign/esign-client": "^3.0"
-    }
+    	"docusign/esign-client": "3.*"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
