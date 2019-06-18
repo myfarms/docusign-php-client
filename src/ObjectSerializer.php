@@ -205,14 +205,13 @@ class ObjectSerializer
     }
 
     /**
-     * Deserialize a JSON string into an object
+     * @param mixed $data
+     * @param string $class
+     * @param null $httpHeaders
      *
-     * @param mixed    $data          object or primitive to be deserialized
-     * @param string   $class         class name is passed as a string
-     * @param string[] $httpHeaders   HTTP headers
-     * @param string   $discriminator discriminator if polymorphism is used
+     * @return array|mixed|object|\SplFileObject|null
      *
-     * @return object|array|null an single or an array of $class instances
+     * @throws \Exception
      */
     public static function deserialize($data, $class, $httpHeaders = null)
     {
@@ -270,6 +269,8 @@ class ObjectSerializer
 
             return $deserialized;
         } else {
+            $class = self::fixClassNamespacing($class);
+
             // If a discriminator is defined and points to a valid subclass, use it.
             $discriminator = $class::DISCRIMINATOR;
             if (!empty($discriminator) && isset($data->{$discriminator}) && is_string($data->{$discriminator})) {
@@ -293,5 +294,18 @@ class ObjectSerializer
             }
             return $instance;
         }
+    }
+
+    /**
+     * Fix issue with loading non-namespaced types
+     * @see https://github.com/trickeyone/docusign-php-client/commit/cc3483c44c301ad7c0d42e41094e70dfde5f68ef
+     */
+    private static function fixClassNamespacing(string $class): string
+    {
+        if (in_array($class, ['Number', 'Date'])) {
+            return '\DocuSign\eSign\Model\\' . $class;
+        }
+
+        return $class;
     }
 }
