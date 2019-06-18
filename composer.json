@@ -30,4 +30,7 @@
     "autoload": {
         "psr-4": { "DocuSign\\eSign\\" : "src/" }
     }
+    "replace": {
+    	"docusign/esign-client": "^3.0"
+    }
 }
